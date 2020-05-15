@@ -1,58 +1,51 @@
-#!/usr/bin/env python3
-
-import pandas as pd
-import seaborn as sns; sns.set()
-import matplotlib.pyplot as plt
-import yfinance as yf
+# coding=utf-8
+"""This is script show brazil macro economics graphs."""
 
 import matplotlib
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
+import yfinance as yf
 
-matplotlib.rcParams['figure.figsize'] = (16,8)
+sns.set()
 
-"""# Obtendo Dados através da API do Banco Central do Brasil"""
+matplotlib.rcParams["figure.figsize"] = (16, 8)
 
-def consulta_bc(codigo_bcb):
-  url = 'http://api.bcb.gov.br/dados/serie/bcdata.sgs.{}/dados?formato=json'.format(codigo_bcb)
-  df = pd.read_json(url)
-  df['data'] = pd.to_datetime(df['data'], dayfirst=True)
-  df.set_index('data', inplace=True)
-  return df
 
-"""# Exemplo de Consultas à API do Banco Central do Brasil"""
+def get_bc_data(cod_bc):
+    """Get the data from Brazilian Central Bank."""
+    burl = "http://api.bcb.gov.br"
+    url = burl + "/dados/serie/bcdata.sgs.{}/dados?formato=json".format(cod_bc)
+    df = pd.read_json(url)
+    df["data"] = pd.to_datetime(df["data"], dayfirst=True)
+    df.set_index("data", inplace=True)
+    return df
 
-ipca = consulta_bc(433)
 
-igpm = consulta_bc(189)
-
-selic_meta = consulta_bc(432)
+ipca = get_bc_data(433)
+igpm = get_bc_data(189)
+selic_meta = get_bc_data(432)
 selic_meta.plot()
 
-reservas_internacionais = consulta_bc(13621)
+dollar_reserve = get_bc_data(13621)
+dollar_reserve.plot()
 
-reservas_internacionais.plot()
-
-pnad = consulta_bc(24369)
+pnad = get_bc_data(24369)
 pnad
 
+ibov = yf.download(tickers="^BVSP")[["Adj Close"]]
+ibov_diff = ibov.pct_change()
 
+cdi = get_bc_data(12)
 
-"""# CDI vs IBOV"""
+start_date = "2000-01-01"
 
-ibov = yf.download(tickers='^BVSP')[['Adj Close']]
+ibov_diff_agg = (1 + ibov_diff[ibov_diff.index >= start_date]).cumprod()
+ibov_diff_agg.iloc[0] = 1
 
-ibov_retorno = ibov.pct_change()
-
-cdi = consulta_bc(12)
-
-data_inicio = '2000-01-01'
-
-ibov_retorno_acumulado = (1 + ibov_retorno[ibov_retorno.index >= data_inicio]).cumprod()
-ibov_retorno_acumulado.iloc[0] = 1
-
-cdi_acumulado = (1 + cdi[cdi.index >= data_inicio] / 100).cumprod()
-cdi_acumulado.iloc[0] = 1
+cdi_agg = (1 + cdi[cdi.index >= start_date] / 100).cumprod()
+cdi_agg.iloc[0] = 1
 
 fig, ax = plt.subplots()
-plt.plot(ibov_retorno_acumulado)
-plt.plot(cdi_acumulado)
-
+plt.plot(ibov_diff_agg)
+plt.plot(cdi_agg)
