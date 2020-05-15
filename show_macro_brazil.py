@@ -47,5 +47,5 @@ cdi_agg = (1 + cdi[cdi.index >= start_date] / 100).cumprod()
 cdi_agg.iloc[0] = 1
 
 fig, ax = plt.subplots()
-plt.plot(ibov_diff_agg)
-plt.plot(cdi_agg)
+ax.plot(ibov_diff_agg)
+ax.plot(cdi_agg)
