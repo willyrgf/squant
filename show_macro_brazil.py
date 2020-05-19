@@ -42,7 +42,7 @@ ibov_diff = ibov.pct_change()
 
 cdi = get_bc_data(12)
 
-start_date = "2000-01-01"
+start_date = "2016-01-01"
 
 ibov_diff_agg = (1 + ibov_diff[ibov_diff.index >= start_date]).cumprod()
 ibov_diff_agg.iloc[0] = 1
@@ -69,11 +69,6 @@ ax.plot(cdi_agg, label="cdi_return_agg")
 ax.plot(selic_meta_date, label="selic_meta")
 ax.plot(dollar_reserve_date_bi, label="dollar_reserve_in_tri")
 
-ax.legend([
-    "ibov_return_agg",
-    "cdi_return_agg",
-    "selic_meta",
-    "dollar_reserve_in_tri"
- ])
+ax.legend(["ibov_return_agg", "cdi_return_agg", "selic_meta", "dollar_reserve_in_tri"])
 
 fig.savefig("./downloads/show_macro_brazil_plot_" + timestr + ".png")
