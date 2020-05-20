@@ -51,12 +51,16 @@ cdi_agg = (1 + cdi[cdi.index >= start_date] / 100).cumprod()
 cdi_agg.iloc[0] = 1
 selic_meta_date = selic_meta[selic_meta.index >= start_date]
 dollar_reserve_date = dollar_reserve[dollar_reserve.index >= start_date]
-dollar_reserve_date_bi = dollar_reserve_date["valor"].div(1000000)
+dollar_reserve_date_tri = dollar_reserve_date["valor"].div(1000000)
 
+print("\nibov_diff_agg:")
 print(ibov_diff_agg)
+print("\ncdi_agg:")
 print(cdi_agg)
+print("\nselic_meta_date:")
 print(selic_meta_date)
-print(dollar_reserve_date_bi)
+print("\ndollar_reserve_date_tri:")
+print(dollar_reserve_date_tri)
 
 fig, ax = plt.subplots()
 ax.set_title("show_macro_brazil.py")
@@ -67,7 +71,7 @@ ax.yaxis.set_label_text("Values")
 ax.plot(ibov_diff_agg, label="ibov_return_agg")
 ax.plot(cdi_agg, label="cdi_return_agg")
 ax.plot(selic_meta_date, label="selic_meta")
-ax.plot(dollar_reserve_date_bi, label="dollar_reserve_in_tri")
+ax.plot(dollar_reserve_date_tri, label="dollar_reserve_in_tri")
 
 ax.legend(["ibov_return_agg", "cdi_return_agg", "selic_meta", "dollar_reserve_in_tri"])
 
